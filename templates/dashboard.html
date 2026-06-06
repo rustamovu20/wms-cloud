@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block crumb %}Operations Dashboard{% endblock %}
+{% block content %}
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-label">Active SKUs</div>
+    <div class="kpi-value cyan">{{ total_skus }}</div>
+    <div class="kpi-foot">Distinct product lines</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Units in Stock</div>
+    <div class="kpi-value">{{ "{:,}".format(total_units) }}</div>
+    <div class="kpi-foot">Across all warehouses</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Stock Value</div>
+    <div class="kpi-value amber">${{ "{:,.0f}".format(stock_value) }}</div>
+    <div class="kpi-foot">At wholesale price</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Open Orders</div>
+    <div class="kpi-value {{ 'red' if open_orders else 'lime' }}">{{ open_orders }}</div>
+    <div class="kpi-foot">Awaiting fulfilment</div>
+  </div>
+  {% if role in ALL_EXCEPT_STAFF %}
+  <div class="kpi">
+    <div class="kpi-label">Customers</div>
+    <div class="kpi-value cyan">{{ total_customers }}</div>
+    <div class="kpi-foot">Registered accounts</div>
+  </div>
+  {% endif %}
+  {% if role in MANAGE_USERS %}
+  <div class="kpi">
+    <div class="kpi-label">System Users</div>
+    <div class="kpi-value">{{ total_users }}</div>
+    <div class="kpi-foot">Staff accounts</div>
+  </div>
+  {% endif %}
+</div>
+
+<div class="two-col">
+  <div class="panel">
+    <h2>⚠ Reorder Alerts</h2>
+    {% if low_stock %}
+    <table>
+      <thead><tr><th>SKU</th><th>Product</th><th class="num">Qty</th><th class="num">Reorder @</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for p in low_stock %}
+        <tr>
+          <td class="sku">{{ p.sku }}</td>
+          <td>{{ p.name }} <span class="muted">/ {{ p.size }} / {{ p.color }}</span></td>
+          <td class="num">{{ p.quantity }}</td>
+          <td class="num">{{ p.reorder_level }}</td>
+          <td><span class="pill low">LOW</span></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="muted" style="padding:10px 0">All products above reorder level. ✓</p>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>Recent Orders</h2>
+    <table>
+      <thead><tr><th>Ref</th><th>Customer</th><th class="num">Qty</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for o in recent %}
+        <tr>
+          <td class="sku">{{ o.reference }}</td>
+          <td>{{ o.customer }}</td>
+          <td class="num">{{ o.qty }}</td>
+          <td>{% include "_status_pill.html" %}</td>
+        </tr>
+      {% endfor %}
+      {% if not recent %}
+        <tr><td colspan="4" class="muted" style="text-align:center;padding:20px">No orders yet.</td></tr>
+      {% endif %}
+      </tbody>
+    </table>
+    {% if role in CREATE_ORDERS %}
+    <div style="margin-top:14px">
+      <a class="btn" href="{{ url_for('order_new') }}">+ New Order</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

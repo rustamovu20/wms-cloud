@@ -1,0 +1,5 @@
+{% if o.status == 'Shipped' %}<span class="pill ok">{{ o.status }}</span>
+{% elif o.status == 'Cancelled' %}<span class="pill low">{{ o.status }}</span>
+{% elif o.status == 'Packing' %}<span class="pill warn">{{ o.status }}</span>
+{% elif o.status == 'Confirmed' %}<span class="pill info">{{ o.status }}</span>
+{% else %}<span class="pill pend">{{ o.status }}</span>{% endif %}

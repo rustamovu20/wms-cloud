@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block crumb %}Inventory Overview — Staff{% endblock %}
+{% block content %}
+
+<div class="access-banner">
+  <span class="banner-icon">👁</span>
+  <div>
+    <div class="banner-title">Read-Only Access</div>
+    <div class="banner-sub">You can view inventory and orders. Contact your manager to make changes.</div>
+  </div>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-label">Active SKUs</div>
+    <div class="kpi-value cyan">{{ total_skus }}</div>
+    <div class="kpi-foot">Distinct product lines</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Units in Stock</div>
+    <div class="kpi-value">{{ "{:,}".format(total_units) }}</div>
+    <div class="kpi-foot">All warehouses</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Low Stock Alerts</div>
+    <div class="kpi-value {{ 'red' if low_stock_count else 'lime' }}">{{ low_stock_count }}</div>
+    <div class="kpi-foot">Items below reorder level</div>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Recent Orders</h2>
+  <table>
+    <thead><tr><th>Reference</th><th>Customer</th><th>SKU</th><th class="num">Qty</th><th>Status</th><th>Date</th></tr></thead>
+    <tbody>
+    {% for o in recent %}
+      <tr>
+        <td class="sku">{{ o.reference }}</td>
+        <td>{{ o.customer }}</td>
+        <td class="sku" style="font-size:11px">{{ o.sku }}</td>
+        <td class="num">{{ o.qty }}</td>
+        <td>{% include "_status_pill.html" %}</td>
+        <td class="muted mono" style="font-size:12px">{{ o.created_at[:10] if o.created_at else '—' }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6" class="muted" style="text-align:center;padding:20px">No orders yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div style="margin-top:14px">
+    <a class="btn ghost" href="{{ url_for('orders') }}">All Orders →</a>
+    <a class="btn ghost" href="{{ url_for('products') }}" style="margin-left:8px">View Inventory →</a>
+  </div>
+</div>
+{% endblock %}

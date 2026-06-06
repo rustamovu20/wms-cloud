@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block crumb %}Analytics &amp; Operations — Manager{% endblock %}
+{% block content %}
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-label">Total Revenue</div>
+    <div class="kpi-value lime">${{ "{:,.0f}".format(total_revenue) }}</div>
+    <div class="kpi-foot">All non-cancelled orders</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Open Orders</div>
+    <div class="kpi-value {{ 'red' if open_orders else 'lime' }}">{{ open_orders }}</div>
+    <div class="kpi-foot">Pending fulfilment</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Active SKUs</div>
+    <div class="kpi-value cyan">{{ total_skus }}</div>
+    <div class="kpi-foot">Distinct product lines</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Stock Value</div>
+    <div class="kpi-value amber">${{ "{:,.0f}".format(stock_value) }}</div>
+    <div class="kpi-foot">At wholesale price</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Customers</div>
+    <div class="kpi-value cyan">{{ total_customers }}</div>
+    <div class="kpi-foot">Registered accounts</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Units in Stock</div>
+    <div class="kpi-value">{{ "{:,}".format(total_units) }}</div>
+    <div class="kpi-foot">All warehouses</div>
+  </div>
+</div>
+
+<div class="two-col">
+
+  {# ── Orders by Status ── #}
+  <div class="panel">
+    <h2>Orders by Status</h2>
+    <div class="chart-bars">
+      {% for row in orders_by_status %}
+      {% set pct = ((row.cnt / max_status_cnt) * 100)|int %}
+      <div class="chart-row">
+        <div class="chart-label">
+          {% if row.status == 'Shipped' %}<span class="pill ok">{{ row.status }}</span>
+          {% elif row.status == 'Cancelled' %}<span class="pill low">{{ row.status }}</span>
+          {% elif row.status == 'Packing' %}<span class="pill warn">{{ row.status }}</span>
+          {% elif row.status == 'Confirmed' %}<span class="pill info">{{ row.status }}</span>
+          {% else %}<span class="pill pend">{{ row.status }}</span>{% endif %}
+        </div>
+        <div class="chart-track">
+          <div class="chart-fill
+            {% if row.status == 'Shipped' %}fill-lime
+            {% elif row.status == 'Cancelled' %}fill-red
+            {% elif row.status in ('Packing','Confirmed') %}fill-amber
+            {% else %}fill-muted{% endif %}"
+            style="width:{{ pct }}%"></div>
+        </div>
+        <div class="chart-val">{{ row.cnt }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <div style="margin-top:14px">
+      <a class="btn" href="{{ url_for('order_new') }}">+ New Order</a>
+      <a class="btn ghost" href="{{ url_for('orders') }}" style="margin-left:8px">All Orders →</a>
+    </div>
+  </div>
+
+  {# ── Top Customers ── #}
+  <div class="panel">
+    <h2>Top Customers</h2>
+    <table>
+      <thead><tr><th>Customer</th><th class="num">Orders</th><th class="num">Units</th></tr></thead>
+      <tbody>
+      {% for c in top_customers %}
+        <tr>
+          <td>{{ c.customer }}</td>
+          <td class="num">{{ c.cnt }}</td>
+          <td class="num">{{ c.total_qty }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="3" class="muted" style="text-align:center;padding:20px">No orders yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <div style="margin-top:14px">
+      <a class="btn ghost" href="{{ url_for('customers') }}">Manage Customers →</a>
+    </div>
+  </div>
+</div>
+
+<div class="two-col">
+
+  {# ── Stock by Category ── #}
+  <div class="panel">
+    <h2>Stock Value by Category</h2>
+    <div class="chart-bars">
+      {% for row in stock_by_cat %}
+      {% set pct = ((row.total_value / max_cat_value) * 100)|int %}
+      <div class="chart-row">
+        <div class="chart-label" style="min-width:110px;font-size:12px">{{ row.category or 'Uncategorised' }}</div>
+        <div class="chart-track">
+          <div class="chart-fill fill-cyan" style="width:{{ pct }}%"></div>
+        </div>
+        <div class="chart-val">${{ "{:,.0f}".format(row.total_value) }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <div style="margin-top:14px">
+      <a class="btn ghost" href="{{ url_for('products') }}">View Inventory →</a>
+    </div>
+  </div>
+
+  {# ── Reorder Alerts ── #}
+  <div class="panel">
+    <h2>⚠ Reorder Alerts</h2>
+    {% if low_stock %}
+    <table>
+      <thead><tr><th>SKU</th><th>Product</th><th class="num">Qty</th><th class="num">Reorder @</th></tr></thead>
+      <tbody>
+      {% for p in low_stock %}
+        <tr>
+          <td class="sku" style="font-size:11px">{{ p.sku }}</td>
+          <td>{{ p.name }}</td>
+          <td class="num {{ 'qty-neg' if p.quantity == 0 else '' }}">{{ p.quantity }}</td>
+          <td class="num">{{ p.reorder_level }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="muted" style="padding:10px 0">All products above reorder level ✓</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

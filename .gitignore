@@ -1,0 +1,10 @@
+wms.db
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.env
+*.log
+.DS_Store
+.claude/

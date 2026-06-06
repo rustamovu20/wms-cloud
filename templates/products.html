@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Inventory{% endblock %}
+{% block crumb %}Inventory{% endblock %}
+{% block content %}
+<div class="bar">
+  <form class="search" method="get">
+    <input name="q" value="{{ q }}" placeholder="Search SKU, name or category…">
+  </form>
+  {% if role in MANAGE_PRODUCTS %}
+  <a class="btn" href="{{ url_for('product_new') }}">+ New Product</a>
+  {% endif %}
+</div>
+
+<div class="panel">
+  <table>
+    <thead>
+      <tr>
+        <th>SKU</th><th>Product</th><th>Category</th><th>Size</th><th>Colour</th>
+        <th class="num">Qty</th><th class="num">Price</th><th>Status</th>
+        {% if role in MANAGE_PRODUCTS %}<th></th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+    {% for p in products %}
+      <tr>
+        <td class="sku">{{ p.sku }}</td>
+        <td>{{ p.name }}</td>
+        <td class="muted">{{ p.category }}</td>
+        <td>{{ p.size }}</td>
+        <td>{{ p.color }}</td>
+        <td class="num">{{ p.quantity }}</td>
+        <td class="num">${{ "%.2f"|format(p.price) }}</td>
+        <td>
+          {% if p.quantity == 0 %}<span class="pill low">OUT</span>
+          {% elif p.quantity <= p.reorder_level %}<span class="pill low">REORDER</span>
+          {% elif p.quantity <= p.reorder_level * 1.5 %}<span class="pill warn">WATCH</span>
+          {% else %}<span class="pill ok">OK</span>{% endif %}
+        </td>
+        {% if role in MANAGE_PRODUCTS %}
+        <td>
+          <div class="inline-actions">
+            <a class="btn ghost" style="padding:6px 11px;font-size:12px" href="{{ url_for('product_edit', pid=p.id) }}">Edit</a>
+            {% if role in DELETE_PRIV %}
+            <form method="post" action="{{ url_for('product_delete', pid=p.id) }}" onsubmit="return confirm('Delete {{ p.sku }}?')">
+              <button class="btn danger" type="submit">Del</button>
+            </form>
+            {% endif %}
+          </div>
+        </td>
+        {% endif %}
+      </tr>
+    {% else %}
+      <tr><td colspan="9" class="muted" style="text-align:center;padding:30px">No products found.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

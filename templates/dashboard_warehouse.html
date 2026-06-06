@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block crumb %}Warehouse Operations{% endblock %}
+{% block content %}
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-label">Low Stock Items</div>
+    <div class="kpi-value {{ 'red' if low_stock_count else 'lime' }}">{{ low_stock_count }}</div>
+    <div class="kpi-foot">Below reorder level</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Out of Stock</div>
+    <div class="kpi-value {{ 'red' if out_of_stock else 'lime' }}">{{ out_of_stock }}</div>
+    <div class="kpi-foot">Zero quantity SKUs</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">To Confirm</div>
+    <div class="kpi-value amber">{{ pending_orders|length }}</div>
+    <div class="kpi-foot">Pending orders</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">To Pick</div>
+    <div class="kpi-value cyan">{{ confirmed_orders|length }}</div>
+    <div class="kpi-foot">Confirmed — awaiting pick</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">To Pack</div>
+    <div class="kpi-value amber">{{ packing_orders|length }}</div>
+    <div class="kpi-foot">Items being packed</div>
+  </div>
+</div>
+
+<div class="two-col">
+
+  {# ── Orders needing action ── #}
+  <div class="panel">
+    <h2>Orders Needing Action</h2>
+    {% set actionable = confirmed_orders + packing_orders + pending_orders %}
+    {% if actionable %}
+    <table>
+      <thead><tr><th>Ref</th><th>Customer</th><th>SKU</th><th class="num">Qty</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+      {% for o in actionable %}
+        <tr>
+          <td class="sku">{{ o.reference }}</td>
+          <td>{{ o.customer }}</td>
+          <td class="sku" style="font-size:11px">{{ o.sku }}</td>
+          <td class="num">{{ o.qty }}</td>
+          <td>{% include "_status_pill.html" %}</td>
+          <td>
+            <a class="btn ghost" style="padding:5px 10px;font-size:11px"
+               href="{{ url_for('order_edit', oid=o.id) }}">Update</a>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="muted" style="padding:16px 0;text-align:center">No orders awaiting action ✓</p>
+    {% endif %}
+    <div style="margin-top:14px">
+      <a class="btn ghost" href="{{ url_for('orders') }}">All Orders →</a>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:22px">
+
+    {# ── Low Stock ── #}
+    <div class="panel">
+      <h2>⚠ Low Stock</h2>
+      {% if low_stock %}
+      <table>
+        <thead><tr><th>SKU</th><th>Product</th><th class="num">Qty</th><th class="num">Min</th></tr></thead>
+        <tbody>
+        {% for p in low_stock %}
+          <tr>
+            <td class="sku" style="font-size:11px">{{ p.sku }}</td>
+            <td style="font-size:12px">{{ p.name }}</td>
+            <td class="num {{ 'qty-neg' if p.quantity == 0 else '' }}">{{ p.quantity }}</td>
+            <td class="num muted">{{ p.reorder_level }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <div style="margin-top:12px">
+        <a class="btn ghost" href="{{ url_for('products') }}">Update Stock →</a>
+      </div>
+      {% else %}
+        <p class="muted" style="padding:8px 0">All stock levels healthy ✓</p>
+      {% endif %}
+    </div>
+
+    {# ── Recent Stock Movements ── #}
+    <div class="panel">
+      <h2>Recent Stock Movements</h2>
+      {% if recent_movements %}
+      <table>
+        <thead><tr><th>SKU</th><th>Type</th><th class="num">Change</th><th>Ref</th></tr></thead>
+        <tbody>
+        {% for m in recent_movements %}
+          <tr>
+            <td class="sku" style="font-size:11px">{{ m.sku }}</td>
+            <td style="font-size:12px">{{ m.type }}</td>
+            <td class="num {{ 'qty-neg' if m.qty_change < 0 else 'qty-pos' }}">
+              {{ '+' if m.qty_change > 0 else '' }}{{ m.qty_change }}
+            </td>
+            <td class="muted" style="font-size:11px">{{ m.reference or '—' }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <div style="margin-top:12px">
+        <a class="btn ghost" href="{{ url_for('stock_log') }}">Full Log →</a>
+      </div>
+      {% else %}
+        <p class="muted" style="padding:8px 0">No movements recorded yet.</p>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

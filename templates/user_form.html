@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if user else 'New' }} User{% endblock %}
+{% block crumb %}{{ 'Edit User' if user else 'New User' }}{% endblock %}
+{% block content %}
+<div class="panel">
+  <form method="post" class="form-grid">
+    <div class="field">
+      <label>Username</label>
+      {% if user %}
+        <input name="username" value="{{ user.username }}" disabled style="opacity:.5;cursor:not-allowed">
+      {% else %}
+        <input name="username" required placeholder="e.g. john_smith" autocomplete="off">
+      {% endif %}
+    </div>
+    <div class="field">
+      <label>Full Name</label>
+      <input name="full_name" value="{{ user.full_name if user else '' }}" placeholder="John Smith">
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input name="email" type="email" value="{{ user.email if user else '' }}" placeholder="john@company.com">
+    </div>
+    <div class="field">
+      <label>Role</label>
+      <select name="role">
+        {% for r in all_roles %}
+          {% if role == 'admin' and r == 'superadmin' %}
+            {# admins cannot assign superadmin #}
+          {% else %}
+            <option value="{{ r }}" {{ 'selected' if user and user.role == r }}>{{ r }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field full">
+      <label>Password {% if user %}<span class="muted">(leave blank to keep current)</span>{% endif %}</label>
+      <input name="password" type="password" {{ 'required' if not user }} autocomplete="new-password"
+             placeholder="{{ 'Set a password' if not user else 'New password (optional)' }}">
+    </div>
+    <div class="field full actions">
+      <button class="btn" type="submit">{{ 'Save changes' if user else 'Create user' }}</button>
+      <a class="btn ghost" href="{{ url_for('users') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if customer else 'New' }} Customer{% endblock %}
+{% block crumb %}{{ 'Edit Customer' if customer else 'New Customer' }}{% endblock %}
+{% block content %}
+<div class="panel">
+  <form method="post" class="form-grid">
+    <div class="field full">
+      <label>Company / Customer Name</label>
+      <input name="name" value="{{ customer.name if customer else '' }}" required placeholder="e.g. Hamid Textile LLC">
+    </div>
+    <div class="field">
+      <label>Contact Person</label>
+      <input name="contact_person" value="{{ customer.contact_person if customer else '' }}" placeholder="e.g. John Smith">
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input name="email" type="email" value="{{ customer.email if customer else '' }}" placeholder="orders@company.com">
+    </div>
+    <div class="field">
+      <label>Phone</label>
+      <input name="phone" value="{{ customer.phone if customer else '' }}" placeholder="+1-555-000000">
+    </div>
+    <div class="field">
+      <label>Address</label>
+      <input name="address" value="{{ customer.address if customer else '' }}" placeholder="Street, City, Country">
+    </div>
+    <div class="field full actions">
+      <button class="btn" type="submit">{{ 'Save changes' if customer else 'Add customer' }}</button>
+      <a class="btn ghost" href="{{ url_for('customers') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

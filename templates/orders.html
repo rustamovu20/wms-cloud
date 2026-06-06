@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Orders{% endblock %}
+{% block crumb %}Sales Orders{% endblock %}
+{% block content %}
+<div class="bar">
+  <div class="muted" style="font-size:13px">
+    {% if role == 'sales' %}Showing your orders only.{% else %}Showing all orders.{% endif %}
+  </div>
+  {% if role in CREATE_ORDERS %}
+  <a class="btn" href="{{ url_for('order_new') }}">+ New Order</a>
+  {% endif %}
+</div>
+<div class="panel">
+  <table>
+    <thead>
+      <tr>
+        <th>Reference</th><th>Customer</th><th>SKU</th><th class="num">Qty</th>
+        <th>Status</th><th>Created by</th><th>Date</th>
+        {% if role in UPDATE_ORDERS %}<th></th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+    {% for o in orders %}
+      <tr>
+        <td class="sku">{{ o.reference }}</td>
+        <td>{{ o.customer }}</td>
+        <td class="sku">{{ o.sku }}</td>
+        <td class="num">{{ o.qty }}</td>
+        <td>{% include "_status_pill.html" %}</td>
+        <td class="muted" style="font-size:12px">{{ o.created_by or '—' }}</td>
+        <td class="muted mono" style="font-size:12px">{{ o.created_at[:10] if o.created_at else '—' }}</td>
+        {% if role in UPDATE_ORDERS %}
+        <td>
+          <div class="inline-actions">
+            <a class="btn ghost" style="padding:6px 11px;font-size:12px" href="{{ url_for('order_edit', oid=o.id) }}">Edit</a>
+            {% if role in DELETE_PRIV %}
+            <form method="post" action="{{ url_for('order_delete', oid=o.id) }}"
+                  onsubmit="return confirm('Delete order {{ o.reference }}? Stock will be restored.')">
+              <button class="btn danger" type="submit">Del</button>
+            </form>
+            {% endif %}
+          </div>
+        </td>
+        {% endif %}
+      </tr>
+    {% else %}
+      <tr><td colspan="8" class="muted" style="text-align:center;padding:30px">No orders found.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

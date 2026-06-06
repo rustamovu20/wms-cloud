@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Stock Log{% endblock %}
+{% block crumb %}Stock Movement Log{% endblock %}
+{% block content %}
+<div class="panel">
+  <table>
+    <thead>
+      <tr>
+        <th>Date / Time</th><th>SKU</th><th>Type</th><th class="num">Change</th>
+        <th>Reference</th><th>User</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for m in movements %}
+      <tr>
+        <td class="muted mono" style="font-size:12px">{{ m.created_at }}</td>
+        <td class="sku">{{ m.sku }}</td>
+        <td>
+          {% if m.type == 'sale' %}<span class="pill low">sale</span>
+          {% elif m.type in ('cancellation', 'deletion', 'reactivation') %}<span class="pill warn">{{ m.type }}</span>
+          {% elif m.type == 'restock' %}<span class="pill ok">restock</span>
+          {% else %}<span class="pill pend">{{ m.type }}</span>{% endif %}
+        </td>
+        <td class="num {{ 'qty-neg' if m.qty_change < 0 else 'qty-pos' }}">
+          {{ '+' if m.qty_change > 0 else '' }}{{ m.qty_change }}
+        </td>
+        <td class="sku">{{ m.reference or '—' }}</td>
+        <td class="muted" style="font-size:12px">{{ m.user or '—' }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6" class="muted" style="text-align:center;padding:30px">No stock movements recorded yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

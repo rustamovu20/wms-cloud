@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block auth %}
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="brand">
+      <span class="brand-mark">◧</span>
+      <div>
+        <div class="brand-name">NIMBUS<span>WMS</span></div>
+        <div class="brand-sub">Cloud Warehouse Control</div>
+      </div>
+    </div>
+    <h1>Sign in</h1>
+    <p>Wholesale clothing · ERP / CRM / WMS cloud platform</p>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}<div class="flash flash-{{ cat }}">{{ msg }}</div>{% endfor %}
+    {% endwith %}
+    <form method="post">
+      <div class="field">
+        <label>Username</label>
+        <input name="username" autofocus required>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input name="password" type="password" required>
+      </div>
+      <button class="btn" type="submit">Enter Control Panel</button>
+    </form>
+    <div class="hint">demo login → admin / admin123</div>
+  </div>
+</div>
+{% endblock %}

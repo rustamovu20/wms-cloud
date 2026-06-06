@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Edit Order{% endblock %}
+{% block crumb %}Edit Order · {{ order.reference }}{% endblock %}
+{% block content %}
+<div class="panel" style="max-width:680px">
+  <div class="order-meta">
+    <div class="meta-row">
+      <span class="meta-label">Reference</span>
+      <span class="sku">{{ order.reference }}</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Customer</span>
+      <span>{{ order.customer }}</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Product / SKU</span>
+      <span class="sku">{{ order.sku }}</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Quantity</span>
+      <span>{{ order.qty }} units</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Created by</span>
+      <span class="muted">{{ order.created_by or '—' }}</span>
+    </div>
+    <div class="meta-row">
+      <span class="meta-label">Created at</span>
+      <span class="muted mono" style="font-size:12px">{{ order.created_at }}</span>
+    </div>
+  </div>
+  <hr class="divider">
+  <form method="post" class="form-grid" style="margin-top:18px">
+    <div class="field">
+      <label>Status</label>
+      <select name="status">
+        {% for s in statuses %}
+        <option value="{{ s }}" {{ 'selected' if s == order.status }}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      {% if order.status != 'Cancelled' %}
+      <small class="field-hint">Setting to Cancelled will automatically restore stock.</small>
+      {% endif %}
+    </div>
+    <div class="field">
+      <label>Notes</label>
+      <input name="notes" value="{{ order.notes or '' }}" placeholder="Add or update notes">
+    </div>
+    <div class="field full actions">
+      <button class="btn" type="submit">Save changes</button>
+      <a class="btn ghost" href="{{ url_for('orders') }}">Back to Orders</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}NimbusWMS{% endblock %} · NimbusWMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+{% if user %}
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">◧</span>
+      <div>
+        <div class="brand-name">NIMBUS<span>WMS</span></div>
+        <div class="brand-sub">Cloud Warehouse Control</div>
+      </div>
+    </div>
+
+    <nav>
+      <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint=='dashboard' }}">▦ Dashboard</a>
+
+      {# Inventory — all roles #}
+      <a href="{{ url_for('products') }}" class="{{ 'active' if request.endpoint in ['products','product_new','product_edit'] }}">▤ Inventory</a>
+
+      {# Orders — all roles (sales see only their own) #}
+      <a href="{{ url_for('orders') }}" class="{{ 'active' if request.endpoint in ['orders','order_new','order_edit'] }}">▥ Orders</a>
+
+      {# Customers — not staff #}
+      {% if role in ALL_EXCEPT_STAFF %}
+      <a href="{{ url_for('customers') }}" class="{{ 'active' if request.endpoint in ['customers','customer_new','customer_edit'] }}">◈ Customers</a>
+      {% endif %}
+
+      {# Stock Log — not sales, not admin, not staff #}
+      {% if role in ['superadmin','manager','warehouse'] %}
+      <a href="{{ url_for('stock_log') }}" class="{{ 'active' if request.endpoint=='stock_log' }}">↕ Stock Log</a>
+      {% endif %}
+
+      {# Users — superadmin and admin (admin is view-only) #}
+      {% if role in VIEW_USERS %}
+      <a href="{{ url_for('users') }}" class="{{ 'active' if request.endpoint in ['users','user_new','user_edit'] }}">◎ Users</a>
+      {% endif %}
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="node">
+        <span class="dot"></span> SERVED BY
+        <code>{{ instance_id }}</code>
+      </div>
+      <div class="user-row">
+        <span class="role-badge role-{{ role }}">{{ role }}</span>
+        <span class="user-name">{{ full_name or user }}</span>
+      </div>
+      <a class="logout" href="{{ url_for('logout') }}">⏻ Sign out ({{ user }})</a>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="topbar">
+      <div class="crumb">{% block crumb %}{% endblock %}</div>
+      <div class="env-tag">AWS · eu-region · Auto Scaling</div>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="flash flash-{{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% else %}
+  {% block auth %}{% endblock %}
+{% endif %}
+</body>
+</html>

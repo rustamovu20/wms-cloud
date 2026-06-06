@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block crumb %}My Sales Dashboard{% endblock %}
+{% block content %}
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="kpi-label">My Orders</div>
+    <div class="kpi-value cyan">{{ my_total }}</div>
+    <div class="kpi-foot">Total orders created</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">In Progress</div>
+    <div class="kpi-value {{ 'amber' if my_open else 'lime' }}">{{ my_open }}</div>
+    <div class="kpi-foot">Pending / Packing</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Shipped</div>
+    <div class="kpi-value lime">{{ my_shipped }}</div>
+    <div class="kpi-foot">Fulfilled orders</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Customers</div>
+    <div class="kpi-value amber">{{ total_customers }}</div>
+    <div class="kpi-foot">Available accounts</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Products Available</div>
+    <div class="kpi-value">{{ skus_available }}</div>
+    <div class="kpi-foot">SKUs in stock</div>
+  </div>
+</div>
+
+<div class="quick-action-bar">
+  <a class="btn" href="{{ url_for('order_new') }}">+ New Order</a>
+  <a class="btn ghost" href="{{ url_for('customers') }}">View Customers</a>
+  <a class="btn ghost" href="{{ url_for('products') }}">Browse Inventory</a>
+</div>
+
+<div class="two-col">
+  <div class="panel">
+    <h2>My Orders</h2>
+    {% if my_orders %}
+    <table>
+      <thead><tr><th>Reference</th><th>Customer</th><th>SKU</th><th class="num">Qty</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>
+      {% for o in my_orders %}
+        <tr>
+          <td class="sku">{{ o.reference }}</td>
+          <td>{{ o.customer }}</td>
+          <td class="sku" style="font-size:11px">{{ o.sku }}</td>
+          <td class="num">{{ o.qty }}</td>
+          <td>{% include "_status_pill.html" %}</td>
+          <td class="muted mono" style="font-size:12px">{{ o.created_at[:10] if o.created_at else '—' }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="muted" style="padding:20px 0;text-align:center">You haven't created any orders yet.</p>
+      <div style="text-align:center">
+        <a class="btn" href="{{ url_for('order_new') }}">Create your first order →</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>Recent Customers</h2>
+    {% if recent_customers %}
+    <table>
+      <thead><tr><th>Company</th><th>Contact</th></tr></thead>
+      <tbody>
+      {% for c in recent_customers %}
+        <tr>
+          <td>{{ c.name }}</td>
+          <td class="muted" style="font-size:12px">{{ c.contact_person or '—' }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <div style="margin-top:14px">
+      <a class="btn ghost" href="{{ url_for('customers') }}">All Customers →</a>
+      <a class="btn ghost" href="{{ url_for('customer_new') }}" style="margin-left:8px">+ Add Customer</a>
+    </div>
+    {% else %}
+      <p class="muted" style="padding:20px 0;text-align:center">No customers yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

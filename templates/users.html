@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block crumb %}User Management{% endblock %}
+{% block content %}
+<div class="bar">
+  <div class="muted" style="font-size:13px">{{ users|length }} system account{{ 's' if users|length != 1 }}</div>
+  <a class="btn" href="{{ url_for('user_new') }}">+ New User</a>
+</div>
+
+<div class="panel">
+  <table>
+    <thead>
+      <tr><th>Username</th><th>Full Name</th><th>Email</th><th>Role</th><th>Created</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for u in users %}
+      <tr>
+        <td class="sku">{{ u.username }}</td>
+        <td>{{ u.full_name or '—' }}</td>
+        <td class="muted">{{ u.email or '—' }}</td>
+        <td><span class="role-badge role-{{ u.role }}">{{ u.role }}</span></td>
+        <td class="muted mono" style="font-size:12px">{{ u.created_at[:10] if u.created_at else '—' }}</td>
+        <td>
+          <div class="inline-actions">
+            <a class="btn ghost" style="padding:6px 11px;font-size:12px" href="{{ url_for('user_edit', uid=u.id) }}">Edit</a>
+            {% if role == 'superadmin' and u.username != user %}
+            <form method="post" action="{{ url_for('user_delete', uid=u.id) }}"
+                  onsubmit="return confirm('Delete user {{ u.username }}?')">
+              <button class="btn danger" type="submit">Del</button>
+            </form>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="panel" style="max-width:500px">
+  <h2>Role Permissions</h2>
+  <table>
+    <thead><tr><th>Role</th><th>Access Level</th></tr></thead>
+    <tbody>
+      <tr><td><span class="role-badge role-superadmin">superadmin</span></td><td class="muted">Full access — users, products, orders, customers</td></tr>
+      <tr><td><span class="role-badge role-admin">admin</span></td><td class="muted">Products, orders, customers, user management</td></tr>
+      <tr><td><span class="role-badge role-manager">manager</span></td><td class="muted">Products, orders, customers — no user management</td></tr>
+      <tr><td><span class="role-badge role-sales">sales</span></td><td class="muted">Create orders, view own orders, view customers</td></tr>
+      <tr><td><span class="role-badge role-warehouse">warehouse</span></td><td class="muted">View/edit inventory, update order status</td></tr>
+      <tr><td><span class="role-badge role-staff">staff</span></td><td class="muted">View inventory and orders only</td></tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}
