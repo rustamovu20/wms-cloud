@@ -34,8 +34,9 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            sudo git config --global --add safe.directory /opt/wms
             cd /opt/wms
             sudo git pull origin master
             sudo /opt/wms/.venv/bin/pip install -r requirements.txt
             sudo systemctl restart wms
-            echo "Deployed commit $(git rev-parse --short HEAD) to $(hostname)"
+            echo "Deployed commit $(sudo git rev-parse --short HEAD) to $(hostname)"
