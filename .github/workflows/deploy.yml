@@ -1,11 +1,8 @@
 name: Deploy NimbusWMS
 
-# CI/CD pipeline for D.P8.
-# Flow: push to main -> build/test -> SSH to EC2 -> pull + restart service.
-
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
@@ -33,12 +30,12 @@ jobs:
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.EC2_HOST }}          # ALB or instance public DNS/IP
-          username: ${{ secrets.EC2_USER }}      # e.g. ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}        # private key (repo secret)
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /opt/wms
-            sudo git pull origin main
+            sudo git pull origin master
             sudo /opt/wms/.venv/bin/pip install -r requirements.txt
             sudo systemctl restart wms
             echo "Deployed commit $(git rev-parse --short HEAD) to $(hostname)"
