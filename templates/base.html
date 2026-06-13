@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}NimbusWMS{% endblock %} · NimbusWMS</title>
+  <title>{% block title %}PDPWMS{% endblock %} · PDPWMS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -22,47 +22,63 @@
     </div>
 
     <nav>
-      <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint=='dashboard' }}">▦ Dashboard</a>
+      <div class="nav-section">Main</div>
 
-      {# Inventory — all roles #}
-      <a href="{{ url_for('products') }}" class="{{ 'active' if request.endpoint in ['products','product_new','product_edit'] }}">▤ Inventory</a>
+      <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint=='dashboard' }}">
+        <span class="nav-icon">◈</span> Dashboard
+      </a>
 
-      {# Orders — all roles (sales see only their own) #}
-      <a href="{{ url_for('orders') }}" class="{{ 'active' if request.endpoint in ['orders','order_new','order_edit'] }}">▥ Orders</a>
+      <div class="nav-section">Operations</div>
 
-      {# Customers — not staff #}
+      <a href="{{ url_for('products') }}" class="{{ 'active' if request.endpoint in ['products','product_new','product_edit'] }}">
+        <span class="nav-icon">▦</span> Inventory
+      </a>
+
+      <a href="{{ url_for('orders') }}" class="{{ 'active' if request.endpoint in ['orders','order_new','order_edit'] }}">
+        <span class="nav-icon">▤</span> Orders
+      </a>
+
       {% if role in ALL_EXCEPT_STAFF %}
-      <a href="{{ url_for('customers') }}" class="{{ 'active' if request.endpoint in ['customers','customer_new','customer_edit'] }}">◈ Customers</a>
+      <a href="{{ url_for('customers') }}" class="{{ 'active' if request.endpoint in ['customers','customer_new','customer_edit'] }}">
+        <span class="nav-icon">◎</span> Customers
+      </a>
       {% endif %}
 
-      {# Stock Log — not sales, not admin, not staff #}
       {% if role in ['superadmin','manager','warehouse'] %}
-      <a href="{{ url_for('stock_log') }}" class="{{ 'active' if request.endpoint=='stock_log' }}">↕ Stock Log</a>
+      <div class="nav-section">Reports</div>
+      <a href="{{ url_for('stock_log') }}" class="{{ 'active' if request.endpoint=='stock_log' }}">
+        <span class="nav-icon">↕</span> Stock Log
+      </a>
       {% endif %}
 
-      {# Users — superadmin and admin (admin is view-only) #}
       {% if role in VIEW_USERS %}
-      <a href="{{ url_for('users') }}" class="{{ 'active' if request.endpoint in ['users','user_new','user_edit'] }}">◎ Users</a>
+      <div class="nav-section">Admin</div>
+      <a href="{{ url_for('users') }}" class="{{ 'active' if request.endpoint in ['users','user_new','user_edit'] }}">
+        <span class="nav-icon">◉</span> Users
+      </a>
       {% endif %}
     </nav>
 
     <div class="sidebar-foot">
-      <div class="node">
-        <span class="dot"></span> SERVED BY
-        <code>{{ instance_id }}</code>
+      <div class="instance-badge">
+        <span class="dot"></span>
+        <span>Instance&nbsp;</span><code>{{ instance_id }}</code>
       </div>
-      <div class="user-row">
-        <span class="role-badge role-{{ role }}">{{ role }}</span>
-        <span class="user-name">{{ full_name or user }}</span>
+      <div class="user-card">
+        <div class="user-avatar">{{ (full_name or user)[0]|upper }}</div>
+        <div class="user-info">
+          <div class="user-name">{{ full_name or user }}</div>
+          <span class="role-badge role-{{ role }}">{{ role }}</span>
+        </div>
       </div>
-      <a class="logout" href="{{ url_for('logout') }}">⏻ Sign out ({{ user }})</a>
+      <a class="logout" href="{{ url_for('logout') }}">Sign out</a>
     </div>
   </aside>
 
   <main class="content">
     <div class="topbar">
       <div class="crumb">{% block crumb %}{% endblock %}</div>
-      <div class="env-tag">AWS · eu-region · Auto Scaling</div>
+      <div class="env-tag">AWS ap-south-1 · Auto Scaling</div>
     </div>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% for cat, msg in messages %}
