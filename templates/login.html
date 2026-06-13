@@ -1,49 +1,31 @@
 {% extends "base.html" %}
 {% block auth %}
 <div class="login-wrap">
-  <div class="login-split">
-
-    <div class="login-hero">
-      <div class="brand">
-        <span class="brand-mark">⬡</span>
-        <div>
-          <div class="brand-name">PDP<span>WMS</span></div>
-          <div class="brand-sub">Cloud Warehouse Control</div>
-        </div>
-      </div>
+  <div class="login-card">
+    <div class="brand">
+      <span class="brand-mark">⬡</span>
       <div>
-        <div class="login-hero-title">Warehouse operations,<br><span>streamlined in the cloud.</span></div>
-        <div class="login-hero-sub">A unified ERP / CRM / WMS platform for wholesale clothing — deployed on AWS with auto-scaling and CI/CD.</div>
-        <div class="login-hero-features">
-          <div class="login-feature"><span class="login-feature-dot"></span>Role-based access for every team</div>
-          <div class="login-feature"><span class="login-feature-dot"></span>Real-time stock tracking & alerts</div>
-          <div class="login-feature"><span class="login-feature-dot"></span>Auto Scaling — handles any load</div>
-          <div class="login-feature"><span class="login-feature-dot"></span>CI/CD — deploys on every git push</div>
-        </div>
+        <div class="brand-name">NIMBUS<span>WMS</span></div>
+        <div class="brand-sub">Cloud Warehouse Control</div>
       </div>
-      <div style="font-size:11px;color:#334155;">AWS ap-south-1 · Application Load Balancer · Auto Scaling Group</div>
     </div>
-
-    <div class="login-form">
-      <h1>Sign in</h1>
-      <p>Enter your credentials to access the control panel</p>
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for cat, msg in messages %}<div class="flash flash-{{ cat }}">{{ msg }}</div>{% endfor %}
-      {% endwith %}
-      <form method="post">
-        <div class="field">
-          <label>Username</label>
-          <input name="username" autofocus required placeholder="e.g. manager1">
-        </div>
-        <div class="field">
-          <label>Password</label>
-          <input name="password" type="password" required placeholder="••••••••">
-        </div>
-        <button class="btn" type="submit">Sign in to Dashboard</button>
-      </form>
-      <div class="hint">demo → admin / admin123 &nbsp;|&nbsp; manager1 / mgr123</div>
-    </div>
-
+    <h1>Sign in</h1>
+    <p>Wholesale clothing · ERP / CRM / WMS cloud platform</p>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}<div class="flash flash-{{ cat }}">{{ msg }}</div>{% endfor %}
+    {% endwith %}
+    <form method="post">
+      <div class="field">
+        <label>Username</label>
+        <input name="username" autofocus required>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input name="password" type="password" required>
+      </div>
+      <button class="btn" type="submit">Enter Control Panel</button>
+    </form>
+    <div class="hint">demo login → admin / admin123</div>
   </div>
 </div>
 {% endblock %}
