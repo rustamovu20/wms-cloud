@@ -1,31 +1,31 @@
 {% extends "base.html" %}
-{% block title %}{{ 'Edit' if customer else 'New' }} Customer{% endblock %}
-{% block crumb %}{{ 'Edit Customer' if customer else 'New Customer' }}{% endblock %}
+{% block title %}{{ 'Edit Student' if customer else 'Add Student' }}{% endblock %}
+{% block crumb %}{{ 'Edit Student' if customer else 'Add Student' }}{% endblock %}
 {% block content %}
-<div class="panel">
+<div class="panel" style="max-width:640px">
   <form method="post" class="form-grid">
     <div class="field full">
-      <label>Company / Customer Name</label>
-      <input name="name" value="{{ customer.name if customer else '' }}" required placeholder="e.g. Hamid Textile LLC">
+      <label>Student Full Name</label>
+      <input name="name" value="{{ customer.name if customer else '' }}" required placeholder="e.g. Rustam Nazarov">
     </div>
     <div class="field">
-      <label>Contact Person</label>
-      <input name="contact_person" value="{{ customer.contact_person if customer else '' }}" placeholder="e.g. John Smith">
+      <label>Student ID</label>
+      <input name="contact_person" value="{{ customer.contact_person if customer else '' }}" placeholder="e.g. STU-2024-001">
     </div>
     <div class="field">
       <label>Email</label>
-      <input name="email" type="email" value="{{ customer.email if customer else '' }}" placeholder="orders@company.com">
+      <input name="email" type="email" value="{{ customer.email if customer else '' }}" placeholder="student@college.ac.uk">
     </div>
     <div class="field">
-      <label>Phone</label>
-      <input name="phone" value="{{ customer.phone if customer else '' }}" placeholder="+1-555-000000">
+      <label>Phone / Parent Contact</label>
+      <input name="phone" value="{{ customer.phone if customer else '' }}" placeholder="+44 7700 000000">
     </div>
-    <div class="field">
-      <label>Address</label>
-      <input name="address" value="{{ customer.address if customer else '' }}" placeholder="Street, City, Country">
+    <div class="field full">
+      <label>Course / Unit</label>
+      <input name="address" value="{{ customer.address if customer else '' }}" placeholder="e.g. BTEC L3 IT – Unit 6 Networking in the Cloud">
     </div>
     <div class="field full actions">
-      <button class="btn" type="submit">{{ 'Save changes' if customer else 'Add customer' }}</button>
+      <button class="btn" type="submit">{{ 'Save changes' if customer else 'Add student' }}</button>
       <a class="btn ghost" href="{{ url_for('customers') }}">Cancel</a>
     </div>
   </form>

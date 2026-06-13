@@ -1,36 +1,42 @@
 {% extends "base.html" %}
-{% block title %}Customers{% endblock %}
-{% block crumb %}Customers{% endblock %}
+{% block title %}Students – Retake Register{% endblock %}
+{% block crumb %}Retake Register{% endblock %}
 {% block content %}
 <div class="bar">
   <form class="search" method="get">
-    <input name="q" value="{{ q }}" placeholder="Search name, email or contact…">
+    <input name="q" value="{{ q }}" placeholder="Search student name, email or ID…">
   </form>
-  <a class="btn" href="{{ url_for('customer_new') }}">+ New Customer</a>
+  <a class="btn" href="{{ url_for('customer_new') }}">+ Add Student</a>
 </div>
 
 <div class="panel">
   <table>
     <thead>
       <tr>
-        <th>Company</th><th>Contact Person</th><th>Email</th><th>Phone</th>
-        <th class="num">Orders</th><th></th>
+        <th>Student Name</th>
+        <th>Student ID</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Course / Unit</th>
+        <th class="num">Retakes</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
     {% for c in customers %}
       <tr>
         <td><strong>{{ c.name }}</strong></td>
-        <td>{{ c.contact_person or '—' }}</td>
+        <td><span class="sku">{{ c.contact_person or '—' }}</span></td>
         <td class="muted">{{ c.email or '—' }}</td>
         <td class="muted mono" style="font-size:12px">{{ c.phone or '—' }}</td>
+        <td class="muted">{{ c.address or '—' }}</td>
         <td class="num">{{ c.order_count }}</td>
         <td>
           <div class="inline-actions">
             <a class="btn ghost" style="padding:6px 11px;font-size:12px" href="{{ url_for('customer_edit', cid=c.id) }}">Edit</a>
             {% if role in DELETE_PRIV %}
             <form method="post" action="{{ url_for('customer_delete', cid=c.id) }}"
-                  onsubmit="return confirm('Delete {{ c.name }}?')">
+                  onsubmit="return confirm('Remove {{ c.name }} from register?')">
               <button class="btn danger" type="submit">Del</button>
             </form>
             {% endif %}
@@ -38,7 +44,7 @@
         </td>
       </tr>
     {% else %}
-      <tr><td colspan="6" class="muted" style="text-align:center;padding:30px">No customers found.</td></tr>
+      <tr><td colspan="7" class="muted" style="text-align:center;padding:30px">No students found.</td></tr>
     {% endfor %}
     </tbody>
   </table>

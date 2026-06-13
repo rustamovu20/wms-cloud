@@ -32,7 +32,7 @@
 
       {# Customers — not staff #}
       {% if role in ALL_EXCEPT_STAFF %}
-      <a href="{{ url_for('customers') }}" class="{{ 'active' if request.endpoint in ['customers','customer_new','customer_edit'] }}">◈ Customers</a>
+      <a href="{{ url_for('customers') }}" class="{{ 'active' if request.endpoint in ['customers','customer_new','customer_edit'] }}">◈ Retake</a>
       {% endif %}
 
       {# Stock Log — not sales, not admin, not staff #}
