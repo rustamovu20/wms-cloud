@@ -20,7 +20,7 @@
     <div class="kpi-foot">Fulfilled orders</div>
   </div>
   <div class="kpi">
-    <div class="kpi-label">Customers</div>
+    <div class="kpi-label">Students (Retake)</div>
     <div class="kpi-value amber">{{ total_customers }}</div>
     <div class="kpi-foot">Available accounts</div>
   </div>
@@ -33,7 +33,7 @@
 
 <div class="quick-action-bar">
   <a class="btn" href="{{ url_for('order_new') }}">+ New Order</a>
-  <a class="btn ghost" href="{{ url_for('customers') }}">View Customers</a>
+  <a class="btn ghost" href="{{ url_for('customers') }}">View Students</a>
   <a class="btn ghost" href="{{ url_for('products') }}">Browse Inventory</a>
 </div>
 
@@ -42,7 +42,7 @@
     <h2>My Orders</h2>
     {% if my_orders %}
     <table>
-      <thead><tr><th>Reference</th><th>Customer</th><th>SKU</th><th class="num">Qty</th><th>Status</th><th>Date</th></tr></thead>
+      <thead><tr><th>Reference</th><th>Student</th><th>SKU</th><th class="num">Qty</th><th>Status</th><th>Date</th></tr></thead>
       <tbody>
       {% for o in my_orders %}
         <tr>
@@ -65,7 +65,7 @@
   </div>
 
   <div class="panel">
-    <h2>Recent Customers</h2>
+    <h2>Recent Students</h2>
     {% if recent_customers %}
     <table>
       <thead><tr><th>Company</th><th>Contact</th></tr></thead>
@@ -79,11 +79,11 @@
       </tbody>
     </table>
     <div style="margin-top:14px">
-      <a class="btn ghost" href="{{ url_for('customers') }}">All Customers →</a>
-      <a class="btn ghost" href="{{ url_for('customer_new') }}" style="margin-left:8px">+ Add Customer</a>
+      <a class="btn ghost" href="{{ url_for('customers') }}">All Students →</a>
+      <a class="btn ghost" href="{{ url_for('customer_new') }}" style="margin-left:8px">+ Add Student</a>
     </div>
     {% else %}
-      <p class="muted" style="padding:20px 0;text-align:center">No customers yet.</p>
+      <p class="muted" style="padding:20px 0;text-align:center">No students yet.</p>
     {% endif %}
   </div>
 </div>

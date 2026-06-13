@@ -39,7 +39,7 @@
     {% set actionable = confirmed_orders + packing_orders + pending_orders %}
     {% if actionable %}
     <table>
-      <thead><tr><th>Ref</th><th>Customer</th><th>SKU</th><th class="num">Qty</th><th>Status</th><th></th></tr></thead>
+      <thead><tr><th>Ref</th><th>Student</th><th>SKU</th><th class="num">Qty</th><th>Status</th><th></th></tr></thead>
       <tbody>
       {% for o in actionable %}
         <tr>

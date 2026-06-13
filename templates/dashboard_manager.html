@@ -25,7 +25,7 @@
     <div class="kpi-foot">At wholesale price</div>
   </div>
   <div class="kpi">
-    <div class="kpi-label">Customers</div>
+    <div class="kpi-label">Students (Retake)</div>
     <div class="kpi-value cyan">{{ total_customers }}</div>
     <div class="kpi-foot">Registered accounts</div>
   </div>
@@ -70,11 +70,11 @@
     </div>
   </div>
 
-  {# ── Top Customers ── #}
+  {# ── Top Students ── #}
   <div class="panel">
-    <h2>Top Customers</h2>
+    <h2>Top Students</h2>
     <table>
-      <thead><tr><th>Customer</th><th class="num">Orders</th><th class="num">Units</th></tr></thead>
+      <thead><tr><th>Student</th><th class="num">Orders</th><th class="num">Units</th></tr></thead>
       <tbody>
       {% for c in top_customers %}
         <tr>
@@ -88,7 +88,7 @@
       </tbody>
     </table>
     <div style="margin-top:14px">
-      <a class="btn ghost" href="{{ url_for('customers') }}">Manage Customers →</a>
+      <a class="btn ghost" href="{{ url_for('customers') }}">Manage Students →</a>
     </div>
   </div>
 </div>
